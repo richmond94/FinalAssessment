@@ -44,7 +44,7 @@ namespace FinalAssessment
         public string ToFile()
         {
 
-            string filePath = @"D:\College Submissions\OOPS\FinalAssessmentCsv\BreastStroke";
+            string filePath = @"D:\College Submissions\OOPS\FinalAssessmentCsv\BreastStroke.csv";
 
 
             using (StreamWriter writer = new StreamWriter(filePath))
