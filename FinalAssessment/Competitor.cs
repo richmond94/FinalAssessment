@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,9 +14,11 @@ namespace FinalAssessment
         private int compAge;
         private string hometown;
         private bool newPB;
-        private BreastStroke compEvent;
+        private Event compEvent;
         private Result results;
         private CompHistory history;
+
+        
 
         public Competitor(int compNumber, string compName, int compAge, string hometown)
         {
@@ -23,52 +26,100 @@ namespace FinalAssessment
             this.compName = compName;
             this.compAge = compAge;
             this.hometown = hometown;
-            this.newPB = false; 
+            
         }
 
         public override string ToString() 
-        { 
-            return $"Competitor Number: {compNumber}\n" +
-                   $"Name: {compName}\n" +
-                   $"Age: {compAge}\n" +
-                   $"Hometown: {hometown}";
+        {
+            string eventDesc = CompEvent != null ? CompEvent.ToString() : "No event";
+            string resultsDesc = Results != null ? Results.ToString() : "No results";
+            string historyDesc = History != null ? History.ToString() : "No history";
+            return $"Competitor Number: {compNumber}, Name: {compName}, Age: {compAge}, Hometown: {hometown}, New Personal Best: {newPB}\nEvent: {eventDesc}\nResult: {resultsDesc}\nHistory: {historyDesc}\n";
         }
 
-        public bool IsNewPB(bool v)
+        public bool IsNewPB()
         {
-            if (results == null || history == null)
-                return false; 
+            if (Results == null || History == null)
+                return false;
 
             
-            if (!newPB || results.raceTime < history.personalBest)
+            if (!newPB && Results.raceTime < History.personalBest)
             {
-                
-                history.personalBest = results.raceTime;
+                History.personalBest = Results.raceTime;
                 newPB = true;
-                return true; 
+                return true;
             }
 
-            return false; 
+            return false;
         }
 
-        
+
 
         public string ToFile()
         {
 
-            string filePath = @"D:\College Submissions\OOPS\FinalAssessmentCsv\Competitor.csv";
-
-
-            using (StreamWriter writer = new StreamWriter(filePath))
-            {
-
-                writer.WriteLine("Competitor Number,Competitor Name,Age,Town,Personal Best?");
-                writer.WriteLine($"{compNumber},{compName},{compAge},{hometown},{(newPB ? "Yes" : "No")}");
-
-            }
-
-            return filePath;
+            return $"{compNumber},{compName},{compAge},{hometown},{newPB}";
         }
 
+        public Event CompEvent
+        {
+            get { return compEvent; }
+            set { compEvent = value; }
+        }
+
+        public Result Results
+        {
+            get { return results; }
+            set {  results = value; }
+        }
+
+        public CompHistory History
+        { 
+            get { return history; } 
+            set {  history = value; }
+        }
+
+        public int GetCompNumber
+        {
+            get { return compNumber; }
+        }
+
+        public string GetCompName() 
+        {
+            return compName;        
+        }
+
+        public int GetCompAge()
+        {
+            return compAge;
+        }
+
+        public string GetHometown()
+        {
+            return hometown;
+        }
+
+        public bool GetNewPB
+        {
+            get { return newPB; }
+            set { GetNewPB = value; }
+        }
+
+        public void SetNewPB(bool value)
+        {
+            newPB = value;
+        }
+
+        public int GetCareerWins()
+        {
+            if (results != null)
+            {
+                return history.careerWins;
+            }
+            else
+            {
+                return 0; 
+            }
+        }
     }
 }

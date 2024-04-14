@@ -25,15 +25,29 @@ namespace FinalAssessment
 
         public override string ToString()
         {
-            return $"Event Number: {GetEventNo()}\n" +
-                   $"Venue: {GetVenue()}\n" +
-                   $"Venue ID: {GetVenueID()}\n" +
-                   $"Event Date Time: {GetEventDateTime()}\n" +
-                   $"Record: {record}\n" +
-                   $"Event Type: {eventType}\n" +
-                   $"Distance: {distance}m\n" +
-                   $"Winning Time: {winningTime}s\n" +
-                   $"New Record: {(newRecord ? "Yes" : "No")}";
+            return $"Event Number: {GetEventNo()}, Venue ID: {GetVenueID()}, Venue: {GetVenue()}, Event DateTime: {GetEventDateTime()}, Record: {GetRecord()}\n" +
+           $"Event Type: {eventType}, Distance: {distance}m, Winning Time: {winningTime}s, New Record: {(newRecord ? "Yes" : "No")}";
+        }
+
+        public string GetEventType()
+        {
+            return eventType;
+        }
+
+        public int GetDistance()
+        {
+            return distance;        
+        }
+
+        public double GetWinningTime() 
+        { 
+            return winningTime;
+        }
+
+        public bool GetNewRecord() 
+        {
+            
+            return newRecord;
         }
 
         public bool IsNewRecord()
@@ -41,20 +55,14 @@ namespace FinalAssessment
             return winningTime < record;
         }
 
-        public string ToFile()
+        public override string ToFile()
         {
+            return $"{GetEventNo()},{GetEventType()},{GetVenue()},{GetVenueID()},{GetEventDateTime()},{GetRecord()},{GetDistance()},{GetWinningTime()},{(GetNewRecord() ? "True" : "False")}";
+        }
 
-            string filePath = @"D:\College Submissions\OOPS\FinalAssessmentCsv\BreastStroke.csv";
-
-
-            using (StreamWriter writer = new StreamWriter(filePath))
-            {
-                
-                writer.WriteLine("Event Number,Venue,Venue ID,Event Date Time,Record,Event Type,Distance,Winning Time,New Record");              
-                writer.WriteLine($"{GetEventNo()},{GetVenue()},{GetVenueID()},{GetEventDateTime()},{record},{eventType},{distance},{winningTime},{(newRecord ? "Yes" : "No")}");
-            }
-
-            return filePath;
+        public void SetNewRecord(bool newRecord)
+        {
+            this.newRecord = newRecord;
         }
 
 

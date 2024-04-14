@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -10,7 +11,7 @@ namespace FinalAssessment
     {
         public int placed { get; private set; }
         public double raceTime { get; private set; }
-        public bool qualified { get; private set; }
+        public bool qualified { get;  set; }
 
         public Result(int placed, double raceTime, bool qualified)
         {
@@ -26,9 +27,12 @@ namespace FinalAssessment
 
         public override string ToString()
         {
-            return $"Placed: {placed}\n" +
-                   $"Race Time: {raceTime}s\n" +
-                   $"Qualified: {(qualified ? "Yes" : "No")}";
+            return $"Placed: {placed}, Race Time: {raceTime}s, Qualified: {(qualified ? "Yes" : "No")}";
+        }
+
+        public string ToFile()
+        {
+            return $"{placed},{raceTime},{qualified}";
         }
     }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -23,6 +24,11 @@ namespace FinalAssessment
             this.eventDateTime = eventDateTime;
             this.record = record;
         }
+        public virtual string ToFile()
+        {
+            
+            return $"{eventNo}";
+        }
 
         public int GetEventNo()
         {
@@ -42,6 +48,11 @@ namespace FinalAssessment
         public string GetEventDateTime()
         {
             return eventDateTime;
+        }
+
+        public double GetRecord() 
+        {
+            return record;
         }
     }
 }
