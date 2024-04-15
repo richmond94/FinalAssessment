@@ -37,38 +37,48 @@ public class Program
             switch (choice)
             {
                 case 1:
+                    Console.Clear();
                     AddCompetitor();
-                   
                     break;
                 case 2:
+                    Console.Clear();
                     DeleteCompetitor();
                     break;
                 case 3:
+                    Console.Clear();
                     competition.ClearAll();
                     break;
                 case 4:
+                    Console.Clear();
                     competition.PrintComp();
                     break;
                 case 5:
+                    Console.Clear();
                     GetAllByEvent();
                     break;
                 case 6:
-                    
+                    Console.Clear();
+                    competition.LoadFromFile(@"D:\College Submissions\OOPS\FinalAssessmentCsv\Competitor.csv");
                     break;
                 case 7:
+                    Console.Clear();
                     competition.SaveToFile(@"D:\College Submissions\OOPS\FinalAssessmentCsv\Competitor.csv");
                     break;
                 case 8:
+                    Console.Clear();
                     //ViewCompIndex();
                     break;
                 case 9:
+                    Console.Clear();
                     competition.SortCompetitorsByAge();
                     break;
                 case 10:
-                    //ViewWinners();
+                    Console.Clear();
+                    competition.Winners(20);
                     break;
                 case 11:
-                   // ViewQualifiers();
+                    Console.Clear();
+                    competition.GetQualifiers();
                     break;
                 case 12:
                     Environment.Exit(0);

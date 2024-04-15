@@ -178,13 +178,44 @@ namespace FinalAssessment
 
         public void Winners(int target)
         {
-            var winners = competitors.Where(c => c.GetCareerWins() != null && c.GetCareerWins() > target);
-            foreach (var winner in winners)
+            var winners = competitors.Where(c => c.GetCareerWins() >= target).ToList();
+            if (winners.Count > 0)
             {
-                Console.WriteLine(winner);
+                Console.WriteLine($"Competitors with more than {target} career wins:");
+                foreach (var competitor in winners)
+                {
+                   
+                    Console.WriteLine($"Number: {competitor.GetCompNumber}, Name: {competitor.GetCompName()}, Age: {competitor.GetCompAge()}, Hometown: {competitor.GetHometown()}");
+                }
+            }
+            else
+            {
+                Console.WriteLine("No competitors found with more than " + target + " career wins.");
             }
         }
 
+        public void GetQualifiers()
+        {
+           
+            var qualifiers = competitors
+                .Where(c => c.Results != null && c.Results.qualified)
+                .OrderBy(c => c.GetCompNumber)   
+                .ThenBy(c => c.Results.raceTime) 
+                .ToList();
+
+            if (qualifiers.Count > 0)
+            {
+                Console.WriteLine("Qualified Competitors:");
+                foreach (var qualifier in qualifiers)
+                {
+                    Console.WriteLine($"Event ID: {qualifier.CompEvent.GetEventNo()}, Competitor Number: {qualifier.GetCompNumber}, Name: {qualifier.GetCompName()}, Placed: {qualifier.Results.placed}, Race Time: {qualifier.Results.raceTime}");
+                }
+            }
+            else
+            {
+                Console.WriteLine("No qualifiers found.");
+            }
+        }
 
 
         public void PrintComp()
