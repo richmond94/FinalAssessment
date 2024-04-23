@@ -32,7 +32,7 @@ namespace FinalAssessment
 
         public int GetEventNo()
         {
-            return eventNo;
+            return this.eventNo;
         }
 
         public string GetVenue()

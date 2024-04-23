@@ -9,10 +9,14 @@ namespace FinalAssessment
     public class Competition
     {
         private List<Competitor> competitors;
+        private List<Event> events;
+       
 
         public Competition() 
         {
             competitors = new List<Competitor>();
+            events = new List<Event>();
+
         }
 
         public void AddCompetitor(Competitor c)
@@ -102,31 +106,33 @@ namespace FinalAssessment
                     
                     competitor.SetNewPB(bool.Parse(fields[4].Trim()));
 
-                    
+
                     if (!string.IsNullOrEmpty(fields[6].Trim()))
                     {
-                        Event evnt = null;
-                        switch (fields[6].Trim())
+                        string eventType = fields[6].Trim();
+                        Console.WriteLine($"Creating event of type: {eventType}");
+
+                        switch (eventType)
                         {
                             case "BreastStroke":
-                                evnt = new BreastStroke(
+                                Event evnt = new BreastStroke(
                                     int.Parse(fields[5].Trim()),  // EventNo
                                     fields[7].Trim(),  // Venue
                                     int.Parse(fields[8].Trim()),  // VenueID
                                     fields[9].Trim(),  // EventDateTime
                                     double.Parse(fields[10].Trim()),  // Record
-                                    fields[6].Trim(),  // EventType
+                                    eventType,  // EventType
                                     int.Parse(fields[11].Trim()),  // Distance
                                     double.Parse(fields[12].Trim()),  // WinningTime
                                     bool.Parse(fields[13].Trim())  // NewRecord
                                 );
+                                Console.WriteLine($"Event created: {evnt}");
+                                competitor.CompEvent = evnt;
                                 break;
-                                
                         }
-                        competitor.CompEvent = evnt;
                     }
 
-                    
+
                     if (!string.IsNullOrEmpty(fields[14].Trim()))
                     {
                         competitor.Results = new Result(
@@ -147,7 +153,7 @@ namespace FinalAssessment
                     }
 
                     competitors.Add(competitor);  
-                    Console.WriteLine($"Loaded {competitor.GetCompName}");
+                   
                 }
                 catch (FormatException ex)
                 {
@@ -160,7 +166,29 @@ namespace FinalAssessment
             }
         }
 
+        public Dictionary<string, string> CompIndex()
+        {
+           
+            Dictionary<string, string> compEventIndex = new Dictionary<string, string>();
 
+            foreach (var competitor in competitors)
+            {
+                string eventNumber = competitor.CompEvent != null ? competitor.CompEvent.GetEventNo().ToString() : "No Event";
+                compEventIndex[competitor.GetCompNumber.ToString()] = eventNumber;
+            }
+
+            return compEventIndex;
+        }
+
+        public void DisplayCompIndex()
+        {
+            var index = CompIndex();
+            Console.WriteLine("Competition Index (Competitor Number : Event Number):");
+            foreach (var entry in index)
+            {
+                Console.WriteLine($"Competitor No: {entry.Key} is in Event No: {entry.Value}");
+            }
+        }
 
         public void SortCompetitorsByAge()
         {
@@ -233,7 +261,29 @@ namespace FinalAssessment
             }
         }
 
-        
+        public bool CheckCompetitor(int compNo)
+        {
+           
+            return competitors.Any(c => c.GetCompNumber == compNo);
+        }
+
+        public bool CheckEvent(int eventNo)
+        {
+            return competitors.Any(c => c.CompEvent != null && c.CompEvent.GetEventNo() == eventNo);
+        }
+
+        public Competitor GetCompetitor(int compNo)
+        {
+            return competitors.FirstOrDefault(c => c.GetCompNumber == compNo);
+        }
+
+        public Event GetEvent(int eventNo)
+        {
+            
+            var competitor = competitors.FirstOrDefault(c => c.CompEvent != null && c.CompEvent.GetEventNo() == eventNo);
+            return competitor?.CompEvent;
+        }
+
 
     }
 }
