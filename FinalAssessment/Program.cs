@@ -164,12 +164,10 @@ public class Program
         int compAge = GetValidCompAge();
         string hometown = GetValidText("Enter Competitor Hometown:");
 
-        
         int eventNo = GetValidEventID();
 
-        Event compEvent = null; // Declare the variable outside of the condition blocks
+        Event compEvent = null; 
 
-        // Check if the event already exists
         if (competition.CheckEvent(eventNo))
         {
             compEvent = competition.GetEvent(eventNo);
@@ -183,20 +181,43 @@ public class Program
         else
         {
             Console.WriteLine("No existing event found with this ID. Proceeding to create a new event.");
-            Console.WriteLine("Venue ID:");
-            int venueID = GetValidVenueID();
 
+            string eventType = GetValidEventType();  
+            int venueID = GetValidVenueID();
             string venue = GetValidText("Venue:");
             string eventDateTime = GetValidEventDateTime();
             double record = GetValidDouble("Record: ");
-            string eventType = "BreastStroke";
             Console.WriteLine("Distance:");
             int distance = GetValidDistance();
             double winningTime = GetValidDouble("Winning Time: ");
+            bool newRecord = false;
 
-            compEvent = new BreastStroke(eventNo, venue, venueID, eventDateTime, record, eventType, distance, winningTime, false);
-            bool newRecord = ((BreastStroke)compEvent).IsNewRecord();
-            ((BreastStroke)compEvent).SetNewRecord(newRecord);
+            switch (eventType.ToLower())
+            {
+                case "breaststroke":
+                    compEvent = new BreastStroke(eventNo, venue, venueID, eventDateTime, record, eventType, distance, winningTime, newRecord);
+                    newRecord = ((BreastStroke)compEvent).IsNewRecord();
+                    ((BreastStroke)compEvent).SetNewRecord(newRecord);
+                    break;
+                case "backstroke":
+                    compEvent = new BackStroke(eventNo, venue, venueID, eventDateTime, record, eventType, distance, winningTime, newRecord);
+                    newRecord = ((BackStroke)compEvent).IsNewRecord();
+                    ((BackStroke)compEvent).SetNewRecord(newRecord);
+                    break;
+                case "butterfly":
+                    compEvent = new Butterfly(eventNo, venue, venueID, eventDateTime, record, eventType, distance, winningTime, newRecord);
+                    newRecord = ((Butterfly)compEvent).IsNewRecord();
+                    ((Butterfly)compEvent).SetNewRecord(newRecord);
+                    break;
+                case "frontcrawl":
+                    compEvent = new FrontCrawl(eventNo, venue, venueID, eventDateTime, record, eventType, distance, winningTime, newRecord);
+                    newRecord = ((FrontCrawl)compEvent).IsNewRecord();
+                    ((FrontCrawl)compEvent).SetNewRecord(newRecord);
+                    break;
+                
+            }
+
+            
         }
 
         Console.WriteLine("Enter Result Details:");
@@ -229,9 +250,38 @@ public class Program
         Console.WriteLine("Competitor added successfully.");
     }
 
+    private static string GetValidEventType()
+    {
+        
+        var eventTypes = new List<string> { "breastStroke", "backStroke", "butterfly", "frontCrawl" };
 
+       
+        Console.WriteLine("Available Event Types:");
+        for (int i = 0; i < eventTypes.Count; i++)
+        {
+            Console.WriteLine($"{i + 1}. {eventTypes[i]}");
+        }
 
+        int choice = 0;
+        do
+        {
+            Console.WriteLine("Please enter the number corresponding to the event type:");
 
+            
+            if (int.TryParse(Console.ReadLine(), out choice) && choice >= 1 && choice <= eventTypes.Count)
+            {
+                break;  
+            }
+            else
+            {
+                Console.WriteLine("Invalid choice. Please select a valid number from the list.");
+            }
+        }
+        while (true);
+
+        
+        return eventTypes[choice - 1]; 
+    }
 
     static int GetValidEventID()
     {

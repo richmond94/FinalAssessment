@@ -80,8 +80,8 @@ namespace FinalAssessment
 
         public void LoadFromFile(string filePath)
         {
-            competitors.Clear(); 
-            var csvLines = File.ReadAllLines(filePath).Skip(1);  
+            competitors.Clear();
+            var csvLines = File.ReadAllLines(filePath).Skip(1);
 
             foreach (var line in csvLines)
             {
@@ -89,80 +89,77 @@ namespace FinalAssessment
 
                 try
                 {
-                    if (fields.Length < 21)  
+                    if (fields.Length < 21)
                     {
                         Console.WriteLine($"Skipped line due to insufficient data: {line}");
                         continue;
                     }
 
-                    
                     var competitor = new Competitor(
                         int.Parse(fields[0].Trim()),  // CompNumber
-                        fields[1].Trim(),  // CompName
+                        fields[1].Trim(),            // CompName
                         int.Parse(fields[2].Trim()),  // CompAge
-                        fields[3].Trim()   // Hometown
+                        fields[3].Trim()             // Hometown
                     );
 
-                    
                     competitor.SetNewPB(bool.Parse(fields[4].Trim()));
 
-
+                    // Create an Event based on EventType
                     if (!string.IsNullOrEmpty(fields[6].Trim()))
                     {
-                        string eventType = fields[6].Trim();
-                        Console.WriteLine($"Creating event of type: {eventType}");
-
-                        switch (eventType)
-                        {
-                            case "BreastStroke":
-                                Event evnt = new BreastStroke(
-                                    int.Parse(fields[5].Trim()),  // EventNo
-                                    fields[7].Trim(),  // Venue
-                                    int.Parse(fields[8].Trim()),  // VenueID
-                                    fields[9].Trim(),  // EventDateTime
-                                    double.Parse(fields[10].Trim()),  // Record
-                                    eventType,  // EventType
-                                    int.Parse(fields[11].Trim()),  // Distance
-                                    double.Parse(fields[12].Trim()),  // WinningTime
-                                    bool.Parse(fields[13].Trim())  // NewRecord
-                                );
-                                Console.WriteLine($"Event created: {evnt}");
-                                competitor.CompEvent = evnt;
-                                break;
-                        }
+                        competitor.CompEvent = CreateEventFromFields(fields);
                     }
 
-
-                    if (!string.IsNullOrEmpty(fields[14].Trim()))
-                    {
-                        competitor.Results = new Result(
-                            int.Parse(fields[14].Trim()),  // Placed
+                    competitor.Results = new Result(
+                        int.Parse(fields[14].Trim()),  // Placed
                             double.Parse(fields[15].Trim()),  // RaceTime
                             bool.Parse(fields[16].Trim())  // Qualified
                         );
-                    }
 
-                    if (!string.IsNullOrEmpty(fields[17].Trim()))
-                    {
                         competitor.History = new CompHistory(
                             fields[17].Trim(),  // MostRecentWin
                             int.Parse(fields[18].Trim()),  // CareerWins
                             fields[19].Split('|').Select(m => m.Trim()).ToList(),  // Medals
                             double.Parse(fields[20].Trim())  // PersonalBest
                         );
-                    }
 
-                    competitors.Add(competitor);  
-                   
+                        competitors.Add(competitor);
+                    }
+                    catch (FormatException ex)
+                    {
+                        Console.WriteLine($"Error parsing data for competitor from line: {line}. Error: {ex.Message}");
+                    }
+                    catch (IndexOutOfRangeException ex)
+                    {
+                        Console.WriteLine($"Data format error (missing fields): {line}. Error: {ex.Message}");
+                    }
                 }
-                catch (FormatException ex)
-                {
-                    Console.WriteLine($"Error parsing data for competitor from line: {line}. Error: {ex.Message}");
-                }
-                catch (IndexOutOfRangeException ex)
-                {
-                    Console.WriteLine($"Data format error (missing fields): {line}. Error: {ex.Message}");
-                }
+}
+
+        private Event CreateEventFromFields(string[] fields)
+        {
+            int eventNo = int.Parse(fields[5].Trim());
+            string venue = fields[7].Trim();
+            int venueID = int.Parse(fields[8].Trim());
+            string eventDateTime = fields[9].Trim();
+            double record = double.Parse(fields[10].Trim());
+            int distance = int.Parse(fields[11].Trim());
+            double winningTime = double.Parse(fields[12].Trim());
+            bool newRecord = bool.Parse(fields[13].Trim());
+            string eventType = fields[6].Trim();
+
+            switch (eventType)
+            {
+                case "BreastStroke":
+                    return new BreastStroke(eventNo, venue, venueID, eventDateTime, record, eventType, distance, winningTime, newRecord);
+                case "backStroke":
+                    return new BackStroke(eventNo, venue, venueID, eventDateTime, record, eventType, distance, winningTime, newRecord);
+                case "butterfly":
+                    return new Butterfly(eventNo, venue, venueID, eventDateTime, record, eventType, distance, winningTime, newRecord);
+                case "frontCrawl":
+                    return new FrontCrawl(eventNo, venue, venueID, eventDateTime, record, eventType, distance, winningTime, newRecord);
+                default:
+                    throw new ArgumentException($"Unsupported event type: {eventType}");
             }
         }
 
