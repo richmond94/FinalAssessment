@@ -44,6 +44,7 @@ public class Program
                     break;
                 case 2:
                     Console.Clear();
+                    competition.PrintComp();
                     DeleteCompetitor();
                     break;
                 case 3:
@@ -92,12 +93,27 @@ public class Program
         }
     }
 
-   
+
 
     static void DeleteCompetitor()
     {
-        Console.WriteLine("Enter Competitor Number to Delete:");
-        int compNumber = int.Parse(Console.ReadLine());
+        int compNumber = 0; 
+        bool validInput = false;
+
+        while (!validInput)
+        {
+            Console.WriteLine("Enter Competitor Number to Delete:");
+            string input = Console.ReadLine();
+
+            if (int.TryParse(input, out compNumber))
+            {
+                validInput = true;
+            }
+            else
+            {
+                Console.WriteLine("Invalid entry. Please enter a valid competitor number.");
+            }
+        }
 
         if (competition.DeleteCompetitor(compNumber))
         {
@@ -108,6 +124,7 @@ public class Program
             Console.WriteLine("Competitor not found.");
         }
     }
+
 
     static void GetAllByEvent()
     {
@@ -164,10 +181,11 @@ public class Program
         int compAge = GetValidCompAge();
         string hometown = GetValidText("Enter Competitor Hometown:");
 
+        Console.WriteLine("Enter Event ID:");
         int eventNo = GetValidEventID();
 
-        Event compEvent = null; 
 
+        Event compEvent = competition.GetEvent(eventNo);
         if (competition.CheckEvent(eventNo))
         {
             compEvent = competition.GetEvent(eventNo);
@@ -180,21 +198,48 @@ public class Program
         }
         else
         {
-            Console.WriteLine("No existing event found with this ID. Proceeding to create a new event.");
+            int venueChoice = 0;
+            bool validInput = false;
 
-            string eventType = GetValidEventType();  
-            int venueID = GetValidVenueID();
-            string venue = GetValidText("Venue:");
+            while (!validInput)
+            {
+                Console.WriteLine("Choose Venue Input Method:");
+                Console.WriteLine("1. Enter Venue Name");
+                Console.WriteLine("2. Enter Venue ID");
+
+                string input = Console.ReadLine();
+                if (int.TryParse(input, out venueChoice) && (venueChoice == 1 || venueChoice == 2))
+                {
+                    validInput = true;
+                }
+                else
+                {
+                    Console.WriteLine("Invalid choice. Please enter 1 or 2.");
+                }
+            }
+
+            string venue = "";
+            int venueID = 0;
+            if (venueChoice == 1)
+            {
+                venue = GetValidText("Enter Venue:");
+            }
+            else
+            {
+                venueID = GetValidVenueID();
+            }
+
+            string eventType = GetValidEventType();
             string eventDateTime = GetValidEventDateTime();
             double record = GetValidDouble("Record: ");
-            Console.WriteLine("Distance:");
             int distance = GetValidDistance();
             double winningTime = GetValidDouble("Winning Time: ");
-            bool newRecord = false;
+            bool newRecord = false; // Default to false, 
 
+            // Create event based on the eventType
             switch (eventType.ToLower())
             {
-                case "breaststroke":
+                case "Breaststroke":
                     compEvent = new BreastStroke(eventNo, venue, venueID, eventDateTime, record, eventType, distance, winningTime, newRecord);
                     newRecord = ((BreastStroke)compEvent).IsNewRecord();
                     ((BreastStroke)compEvent).SetNewRecord(newRecord);
@@ -214,14 +259,13 @@ public class Program
                     newRecord = ((FrontCrawl)compEvent).IsNewRecord();
                     ((FrontCrawl)compEvent).SetNewRecord(newRecord);
                     break;
-                
-            }
 
-            
+            }
         }
+        
 
         Console.WriteLine("Enter Result Details:");
-        Console.WriteLine("Placed:");
+
         int placed = GetValidPlacement();
         double raceTime = GetValidDouble("Race Time: ");
         Result results = new Result(placed, raceTime, false);
@@ -233,7 +277,7 @@ public class Program
         Console.WriteLine("How Many Wins In Career:");
         int careerWins = GetValidCareerWins();
         Console.WriteLine("Medals Acquired:");
-        List<string> medals = Console.ReadLine().Split(',').ToList();
+        List<string> medals = GetMedals();
         double personalBest = GetValidDouble("Personal Best Time: ");
         CompHistory history = new CompHistory(mostRecentWin, careerWins, medals, personalBest);
 
@@ -250,10 +294,11 @@ public class Program
         Console.WriteLine("Competitor added successfully.");
     }
 
+
     private static string GetValidEventType()
     {
         
-        var eventTypes = new List<string> { "breastStroke", "backStroke", "butterfly", "frontCrawl" };
+        var eventTypes = new List<string> { "BreastStroke", "backStroke", "butterfly", "frontCrawl" };
 
        
         Console.WriteLine("Available Event Types:");
@@ -435,6 +480,25 @@ public class Program
         return compAge;
     }
 
+    private static List<string> GetMedals()
+    {
+        Console.WriteLine("Enter the number of Gold medals:");
+        int gold = GetValidInteger("Gold Medals: ");
+
+        Console.WriteLine("Enter the number of Silver medals:");
+        int silver = GetValidInteger("Silver Medals: ");
+
+        Console.WriteLine("Enter the number of Bronze medals:");
+        int bronze = GetValidInteger("Bronze Medals: ");
+
+        List<string> medals = new List<string>();
+        if (gold > 0) medals.Add($"{gold}G");
+        if (silver > 0) medals.Add($"{silver}S");
+        if (bronze > 0) medals.Add($"{bronze}B");
+
+        return medals;
+    }
+
     private static string GetValidText(string prompt, bool allowDigits = false)
     {
         while (true)
@@ -477,6 +541,19 @@ public class Program
                 Console.WriteLine("Invalid input. Please enter a number with exactly two decimal places (e.g., 123.45).");
             }
         }
+    }
+
+    private static int GetValidInteger(string prompt)
+    {
+        int value;
+        string input;
+        do
+        {
+            Console.WriteLine(prompt);
+            input = Console.ReadLine();
+        } while (!int.TryParse(input, out value) || value < 0);
+
+        return value;
     }
 
     private static int GetValidPlacement()

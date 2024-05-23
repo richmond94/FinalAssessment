@@ -30,6 +30,8 @@ namespace FinalAssessment
             return $"{eventNo}";
         }
 
+        public abstract Event GetEvent(string venue, int venueID);
+
         public int GetEventNo()
         {
             return this.eventNo;

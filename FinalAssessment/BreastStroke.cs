@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using NUnit.Framework.Internal.Execution;
 
 namespace FinalAssessment
 {
@@ -27,6 +28,14 @@ namespace FinalAssessment
         {
             return $"Event Number: {GetEventNo()}, Venue ID: {GetVenueID()}, Venue: {GetVenue()}, Event DateTime: {GetEventDateTime()}, Record: {GetRecord()}\n" +
            $"Event Type: {eventType}, Distance: {distance}m, Winning Time: {winningTime}s, New Record: {(newRecord ? "Yes" : "No")}";
+        }
+
+        public override Event GetEvent(string venue, int venueID)
+        {
+            if (!string.IsNullOrEmpty(venue))
+                return new BreastStroke(GetEventNo(), venue, 0, GetEventDateTime(), GetRecord(), eventType, distance, winningTime, newRecord);
+            else
+                return new BreastStroke(GetEventNo(), "", venueID, GetEventDateTime(), GetRecord(), eventType, distance, winningTime, newRecord);
         }
 
         public string GetEventType()

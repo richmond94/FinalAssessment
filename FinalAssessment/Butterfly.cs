@@ -30,6 +30,13 @@ namespace FinalAssessment
            $"Event Type: {eventType}, Distance: {distance}m, Winning Time: {winningTime}s, New Record: {(newRecord ? "Yes" : "No")}";
         }
 
+        public override Event GetEvent(string venue, int venueID)
+        {
+            if (!string.IsNullOrEmpty(venue))
+                return new Butterfly(GetEventNo(), venue, 0, GetEventDateTime(), GetRecord(), eventType, distance, winningTime, newRecord);
+            else
+                return new Butterfly(GetEventNo(), "", venueID, GetEventDateTime(), GetRecord(), eventType, distance, winningTime, newRecord);
+        }
         public string GetEventType()
         {
             return eventType;
